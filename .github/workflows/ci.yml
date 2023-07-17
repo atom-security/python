@@ -44,6 +44,15 @@ jobs:
           echo "strategy=$strategy" >> "$GITHUB_OUTPUT"
           jq . <<<"$strategy" # sanity check / debugging aid
 
+     -
+      name: Set up CoPilot JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+     -
+      name: Upload to CoPilot
+      if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+      run: bash <(curl -s https://copilot.blackducksoftware.com/ci/githubactions/scripts/upload)
   test:
     needs: generate-jobs
     strategy: ${{ fromJson(needs.generate-jobs.outputs.strategy) }}
